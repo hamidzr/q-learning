@@ -93,11 +93,13 @@ class Tic(object):
     else:
       return beta
 
-  def move_move_1P(move, player='X', difficulty=1):
+  # play against an AI. a response move will be made by the AI
+  def move_and_respond(self, move, player='X', difficulty=1):
     board.make_move(move, player)
-    enemy_ai = get_enemy(player)
-    computer_move = determine(board, enemy_ai, random_ratio=0.2)
-    board.make_move(computer_move, enemy_ai)
+    if not board.complete():
+      enemy_player = get_enemy(player)
+      computer_move = determine(board, enemy_player, random_ratio=1-difficulty)
+      board.make_move(computer_move, enemy_player)
     #return the state?
 
 
@@ -136,13 +138,8 @@ if __name__ == "__main__":
     player_move = int(input("Next Move: ")) - 1
     if not player_move in board.available_moves():
       continue
-    board.make_move(player_move, player)
+    board.move_and_respond(player_move, player, difficulty=0)
     board.show()
-
     if board.complete():
       break
-    player = get_enemy(player)
-    computer_move = determine(board, player, random_ratio=0.2)
-    board.make_move(computer_move, player)
-    board.show()
   print("winner is", board.winner())
