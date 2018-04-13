@@ -3,6 +3,8 @@
 import random
 import numpy as np
 
+# status codes
+WRONG_MOVE = 'WRONGMOVE'
 
 class Tic:
   winning_combos = (
@@ -122,13 +124,14 @@ class Tic:
     return np.array(state).reshape(1, len(state))
 
 # assuming that the player is 'X'
+# TODO move the step and state logic to the player
   def step(self, action, player='X'):
-    # next_state, reward, done = env.step(action)
+    # next_state, reward, done, _info= env.step(action)
     if not action in self.available_moves():
       new_state = self.state()
-      reward = -1
-      done = False
-      return new_state, reward, done
+      reward = -15
+      done = True
+      return new_state, reward, done, WRONG_MOVE
     # prepare the new_state
     self.move_and_respond(action, player=player)
     new_state = self.state()
@@ -138,13 +141,13 @@ class Tic:
       reward = 10
     elif winner == get_enemy(player):
       reward = -10
-    else:
-      reward = -0.5 # or 0?
+    else: # reward for picking a valid action..
+      reward = 2
     reward = float(reward)
 
     # is it finished?
     done = self.complete() # OPTIMIZE recomputing the winner
-    return new_state, reward, done
+    return new_state, reward, done, winner
 
 
 
