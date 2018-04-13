@@ -8,8 +8,10 @@ from keras import backend as K
 
 class DQNAgent:
   def __init__(self, state_size, action_size, epsilon=1,
-         epsilon_min=0.01, epsilon_decay=0.99,
-         discount_rate=0.95, learning_rate=0.001):
+               epsilon_min=0.01, epsilon_decay=0.99,
+               discount_rate=0.95, learning_rate=0.001,
+               batch_size=32):
+    self.batch_size = batch_size
     self.state_size = state_size
     self.action_size = action_size
     self.memory = deque(maxlen=2000)
@@ -50,8 +52,11 @@ class DQNAgent:
     act_values = self.model.predict(state)
     return np.argmax(act_values[0])  # returns action
 
-  def replay(self, batch_size):
-    minibatch = random.sample(self.memory, batch_size)
+  def attempt_replay(self):
+    if len(self.memory) > self.batch_size: self.replay()
+
+  def replay(self):
+    minibatch = random.sample(self.memory, self.batch_size)
     # print('minibatch shape', minibatch[0])
     for state, action, reward, next_state, done in minibatch:
       # print('state shape', state.shape)
