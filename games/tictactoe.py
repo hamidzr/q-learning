@@ -3,9 +3,6 @@
 import random
 import numpy as np
 
-# status codes
-WRONG_MOVE = 'WRONGMOVE'
-
 class Tic:
   winning_combos = (
     [0, 1, 2], [3, 4, 5], [6, 7, 8],
@@ -101,13 +98,16 @@ class Tic:
       return beta
 
   # play against an AI. a response move will be made by the AI
-  def move_and_respond(self, move, player='X'):
+  def move_and_respond(self, move, player):
     self.make_move(move, player)
     if not self.complete():
       enemy_player = get_enemy(player)
       computer_move = determine(self, enemy_player, random_ratio=self.random_ratio)
       self.make_move(computer_move, enemy_player)
     return self.squares
+
+  def get_enemy(self, player):
+    return get_enemy(player)
 
 
 def determine(board, player, random_ratio=0):
@@ -144,7 +144,7 @@ if __name__ == "__main__":
     player_move = int(input("Next Move: "))
     if not player_move in board.available_moves():
       continue
-    board.move_and_respond(player_move, player, difficulty=0.5)
+    board.move_and_respond(player_move, player)
     board.show()
     if board.complete():
       break
