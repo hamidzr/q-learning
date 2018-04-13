@@ -1,9 +1,11 @@
 from models.game import Game
+from utils.helpers import GameStats
 import numpy as np
 
 class TicTacToe(Game):
   def __init__(self, base_game=None):
     self._game = base_game
+    self.stats = GameStats()
 
   def state(self):
     state = self._game.squares[:] # make a copy
@@ -20,30 +22,38 @@ class TicTacToe(Game):
     # TODO normalize state
     return state
 
-  def step(self, action, player):
+  def step(self, action, role):
     # compute the state into NN friendly format, normalize etc
-    print('making a move', action, player)
     if not action in self._game.available_moves():
-      print(f'{action} not available in {self._game.available_moves()}')
       new_state = self.state()
       reward = -15
+      self.stats.illegal_move()
       isDone = True
-      return new_state, reward, isDone, self._game.WRONG_MOVE
+      return new_state, reward, isDone, 'WRONGMOVE'
     # prepare the new_state
-    self._game.move_and_respond(action, player)
+    self._game.move_and_respond(action, role)
     new_state = self.state()
+
+    # is it finished?
+    isDone = self._game.complete() # OPTIMIZE recomputing the winner
+
     # define the rewards
     info = self._game.winner()
-    if info ==  player:
-      reward = 10
-    elif info == self._game.get_enemy(player):
-      reward = -10
+    if isDone:
+      if info ==  role:
+        self.stats.won()
+        reward = 10
+      elif info == self._game.get_enemy(role):
+        self.stats.lost()
+        reward = -10
+      else: # draw
+        assert info == None, 'bad game winner'
+        self.stats.draw()
+        reward = 0
     else: # reward for picking a valid action..
       reward = 2
     reward = float(reward)
 
-    # is it finished?
-    isDone = self._game.complete() # OPTIMIZE recomputing the winner
     return new_state, reward, isDone, info
 
   def show(self):
@@ -51,4 +61,3 @@ class TicTacToe(Game):
 
   def reset(self):
     self._game.reset()
-
