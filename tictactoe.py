@@ -100,7 +100,37 @@ class Tic(object):
       enemy_player = get_enemy(player)
       computer_move = determine(board, enemy_player, random_ratio=1-difficulty)
       board.make_move(computer_move, enemy_player)
-    #return the state?
+    return self.squares
+
+  # standard interface to the game (apply action, get state)
+  def state(self):
+    state = self.squares
+    # map x and o to numbers
+    for val, idx in enumerate(state):
+      if val == 'O':
+        state[idx] = 1
+      if val == 'X':
+        state[idx] = 0
+    return state
+
+# assuming that the player is 'X'
+  def step(self, action, player='X'):
+    # next_state, reward, done = env.step(action)
+    # prepare the new_state
+    self.move_and_respond(move, player=player)
+    new_state = self.state()
+    # what is the reward
+    winner = self.winner()
+    if winner ==  player:
+      reward = 1
+    elif winner == get_enemy(player):
+      reward = -1
+    else:
+      reward = 0
+
+    # is it finished?
+    done = self.complete() # OPTIMIZE recomputing the winner
+    return new_state, reward, done
 
 
 
@@ -135,10 +165,10 @@ if __name__ == "__main__":
 
   while not board.complete():
     player = 'X'
-    player_move = int(input("Next Move: ")) - 1
+    player_move = int(input("Next Move: "))
     if not player_move in board.available_moves():
       continue
-    board.move_and_respond(player_move, player, difficulty=0)
+    board.move_and_respond(player_move, player, difficulty=0.5)
     board.show()
     if board.complete():
       break
