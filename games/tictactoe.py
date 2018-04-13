@@ -1,9 +1,10 @@
 #!/usr/bin/env python
 
 import random
+import numpy as np
 
 
-class Tic(object):
+class Tic:
   winning_combos = (
     [0, 1, 2], [3, 4, 5], [6, 7, 8],
     [0, 3, 6], [1, 4, 7], [2, 5, 8],
@@ -11,11 +12,15 @@ class Tic(object):
 
   winners = ('X-win', 'Draw', 'O-win')
 
-  def __init__(self, squares=[]):
+  def __init__(self, squares=[], random_ratio=0):
+    self.random_ratio=random_ratio
     if len(squares) == 0:
       self.squares = [None for i in range(9)]
     else:
       self.squares = squares
+
+  def reset(self):
+    self.squares = [None for i in range(9)]
 
   def show(self):
     for element in [self.squares[i:i + 3] for i in range(0, len(self.squares), 3)]:
@@ -94,39 +99,48 @@ class Tic(object):
       return beta
 
   # play against an AI. a response move will be made by the AI
-  def move_and_respond(self, move, player='X', difficulty=1):
-    board.make_move(move, player)
-    if not board.complete():
+  def move_and_respond(self, move, player='X'):
+    self.make_move(move, player)
+    if not self.complete():
       enemy_player = get_enemy(player)
-      computer_move = determine(board, enemy_player, random_ratio=1-difficulty)
-      board.make_move(computer_move, enemy_player)
+      computer_move = determine(self, enemy_player, random_ratio=self.random_ratio)
+      self.make_move(computer_move, enemy_player)
     return self.squares
 
   # standard interface to the game (apply action, get state)
   def state(self):
-    state = self.squares
+    state = self.squares[:] # make a copy
     # map x and o to numbers
-    for val, idx in enumerate(state):
+    for idx, val in enumerate(state):
+    # TODO normalize values (0,1)
       if val == 'O':
         state[idx] = 1
       if val == 'X':
+        state[idx] = -1
+      if val == None:
         state[idx] = 0
-    return state
+    return np.array(state).reshape(1, len(state))
 
 # assuming that the player is 'X'
   def step(self, action, player='X'):
     # next_state, reward, done = env.step(action)
+    if not action in self.available_moves():
+      new_state = self.state()
+      reward = -1
+      done = False
+      return new_state, reward, done
     # prepare the new_state
-    self.move_and_respond(move, player=player)
+    self.move_and_respond(action, player=player)
     new_state = self.state()
     # what is the reward
     winner = self.winner()
     if winner ==  player:
-      reward = 1
+      reward = 10
     elif winner == get_enemy(player):
-      reward = -1
+      reward = -10
     else:
-      reward = 0
+      reward = -0.5 # or 0?
+    reward = float(reward)
 
     # is it finished?
     done = self.complete() # OPTIMIZE recomputing the winner
@@ -145,7 +159,7 @@ def determine(board, player, random_ratio=0):
     board.make_move(move, player)
     val = board.alphabeta(board, get_enemy(player), -2, 2)
     board.make_move(move, None)
-    print("move:", move + 1, "causes:", board.winners[val + 1])
+    # print("move:", move + 1, "causes:", board.winners[val + 1])
     if val > a:
       a = val
       choices = [move]
