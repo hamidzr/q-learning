@@ -7,15 +7,17 @@ from keras.optimizers import Adam
 from keras import backend as K
 
 class DQNAgent:
-    def __init__(self, state_size, action_size):
+    def __init__(self, state_size, action_size, epsilon=1,
+                 epsilon_min=0.01, epsilon_decay=0.99,
+                 discount_rate=0.95, learning_rate=0.001):
         self.state_size = state_size
         self.action_size = action_size
         self.memory = deque(maxlen=2000)
-        self.gamma = 0.95    # discount rate
-        self.epsilon = 1.0  # exploration rate
-        self.epsilon_min = 0.01
-        self.epsilon_decay = 0.99
-        self.learning_rate = 0.001
+        self.gamma = discount_rate    # discount rate
+        self.epsilon = epsilon  # exploration rate
+        self.epsilon_min = epsilon_min
+        self.epsilon_decay = epsilon_decay
+        self.learning_rate = learning_rate
         self.model = self._build_model()
         self.target_model = self._build_model()
         self.update_target_model()
@@ -62,6 +64,7 @@ class DQNAgent:
                 target[0][action] = reward + self.gamma * t[np.argmax(a)]
             self.model.fit(state, target, epochs=1, verbose=0)
         if self.epsilon > self.epsilon_min:
+            # TODO linear decay?
             self.epsilon *= self.epsilon_decay
 
     def load(self, name):
