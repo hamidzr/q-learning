@@ -3,8 +3,6 @@ from pygame.locals import *
 from random import randint
 import os, sys, time
 
-ARRAY_SIZE = 50
-
 DIRECTIONS = {
   "LEFT": (-1, 0),
   "RIGHT": (1, 0),
@@ -12,88 +10,86 @@ DIRECTIONS = {
   "DOWN": (0, -1),
 }
 
-snake, fruit = None, None
+class SnakeG:
+  def __init__(self, board_size=50):
+    self.snake = [ (0, 2), (0, 1), (0, 0)]
+    self.fruit = None
+    self.board_size = board_size
 
-def init():
-  global snake
-  snake = [ (0, 2), (0, 1), (0, 0)]
+    self.place_fruit((self.board_size // 2, self.board_size // 2))
 
-  place_fruit((ARRAY_SIZE // 2, ARRAY_SIZE // 2))
+  def place_fruit(self, coord=None):
+    if coord:
+      self.fruit = coord
+      return
 
-def place_fruit(coord=None):
-  global fruit
-  if coord:
-    fruit = coord
-    return
+    while True:
+      x = randint(0, self.board_size-1)
+      y = randint(0, self.board_size-1)
+      if (x, y) not in self.snake:
+         self.fruit = x, y
+         return
 
-  while True:
-    x = randint(0, ARRAY_SIZE-1)
-    y = randint(0, ARRAY_SIZE-1)
-    if (x, y) not in snake:
-       fruit = x, y
-       return
+  def step(self, direction):
+    old_head = self.snake[0]
+    movement = DIRECTIONS[direction]
+    new_head = (old_head[0]+movement[0], old_head[1]+movement[1])
 
-def step(direction):
-  old_head = snake[0]
-  movement = DIRECTIONS[direction]
-  new_head = (old_head[0]+movement[0], old_head[1]+movement[1])
+    if (
+        new_head[0] < 0 or
+        new_head[0] >= self.board_size or
+        new_head[1] < 0 or
+        new_head[1] >= self.board_size or
+        new_head in self.snake
+      ):
+      return False
 
-  if (
-      new_head[0] < 0 or
-      new_head[0] >= ARRAY_SIZE or
-      new_head[1] < 0 or
-      new_head[1] >= ARRAY_SIZE or
-      new_head in snake
-    ):
-    return False
+    if new_head == self.fruit:
+      self.place_fruit()
+    else:
+      tail = self.snake[-1]
+      del self.snake[-1]
 
-  if new_head == fruit:
-    place_fruit()
-  else:
-    tail = snake[-1]
-    del snake[-1]
+    self.snake.insert(0, new_head)
+    return True
 
-  snake.insert(0, new_head)
-  return True
-
-def print_field():
-  os.system('clear')
-  print('=' * (ARRAY_SIZE+2))
-  for y in range(ARRAY_SIZE-1, -1, -1):
-    print('|', end='')
-    for x in range(ARRAY_SIZE):
-      out = ' '
-      if (x, y) in snake:
-        out = 'X'
-      elif (x, y) == fruit:
-        out = 'O'
-      print(out, end='')
-    print('|')
-  print('=' * (ARRAY_SIZE+2))
+  def print_field(self):
+    os.system('clear')
+    print('=' * (self.board_size+2))
+    for y in range(self.board_size-1, -1, -1):
+      print('|', end='')
+      for x in range(self.board_size):
+        out = ' '
+        if (x, y) in self.snake:
+          out = 'X'
+        elif (x, y) == self.fruit:
+          out = 'O'
+        print(out, end='')
+      print('|')
+    print('=' * (self.board_size+2))
 
 def test():
-  global fruit
-  init()
-  assert step('UP')
+  snakeGame = SnakeG()
+  assert snakeGame.step('UP')
 
-  assert snake == [(0, 3), (0, 2), (0, 1)]
+  assert snakeGame.snake == [(0, 3), (0, 2), (0, 1)]
 
-  fruit = (0, 4)
-  assert step('UP')
+  snakeGame.fruit = (0, 4)
+  assert snakeGame.step('UP')
 
-  assert snake == [(0, 4), (0, 3), (0, 2), (0, 1)]
-  assert fruit != (0, 4)
+  assert snakeGame.snake == [(0, 4), (0, 3), (0, 2), (0, 1)]
+  assert snakeGame.fruit != (0, 4)
 
-  assert not step('DOWN'), 'Kdyz nacouvam do sebe, umru!'
+  assert not snakeGame.step('DOWN'), 'error from test'
 
-DIRS = ['UP', 'RIGHT', 'DOWN', 'LEFT']
 def run():
-  init()
+  DIRS = ['UP', 'RIGHT', 'DOWN', 'LEFT']
+  game = SnakeG()
 
   direction = 0
 
   pygame.init()
-  s = pygame.display.set_mode((ARRAY_SIZE * 10, ARRAY_SIZE * 10))
+  s = pygame.display.set_mode((game.board_size * 10, game.board_size * 10))
   #pygame.display.set_caption('Snake')
   appleimage = pygame.Surface((10, 10))
   appleimage.fill((0, 255, 0))
@@ -113,13 +109,15 @@ def run():
           direction = (direction+1) % 4
     time.sleep(100/1000.0)
 
-    if not step(DIRS[direction]):
+    if not game.step(DIRS[direction]):
       pygame.quit()
       sys.exit(1)
 
     s.fill((255, 255, 255))
-    for bit in snake:
-      s.blit(img, (bit[0] * 10, (ARRAY_SIZE - bit[1] - 1) * 10))
-    s.blit(appleimage, (fruit[0] * 10, (ARRAY_SIZE - fruit[1]-1) * 10))
+    for bit in game.snake:
+      s.blit(img, (bit[0] * 10, (game.board_size - bit[1] - 1) * 10))
+    s.blit(appleimage, (game.fruit[0] * 10, (game.board_size - game.fruit[1]-1) * 10))
     pygame.display.flip()
-run()
+
+if __name__ == '__main__':
+  run()
