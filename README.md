@@ -2,6 +2,7 @@
 
 
 ## TODO
+- add pong and snake games
 - pull the step and state logc out of the game(s)
 - optimize the model, other archtectures (ongoing)
 - port the model to browser. (tfjs?)
