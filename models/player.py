@@ -28,11 +28,11 @@ class Player:
           # update game stats
           self.agent.update_target_model()
           # put out logs TODO: based on win/loss or score
-          msg = f"ep: {e}/{episodes}, moves: {moveNum}, e: {self.agent.epsilon},"
+          msg = f"ep: {e}/{episodes}, moves: {moveNum}, e: {self.agent.epsilon:.2},"
           if log == 'wins':
             msg += f"win/all: {self.game.stats.win_rate()} - draws/all {self.game.stats.draw_rate()}"
           elif log == 'score':
-            msg += f" score: {self.game.stats.score}, rewards: {self.game.stats.rewards}"
+            msg += f" score: {self.game.stats.score}, rewards: {float(self.game.stats.rewards):.5}"
           print(msg)
 
           if show: self.game.show()
