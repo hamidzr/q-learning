@@ -20,12 +20,7 @@ agent = DQNAgent(state_size, action_size, epsilon=0.05,
                  epsilon_decay=0.995, epsilon_min=0.01, batch_size=32)
 agent.load(SAVE_LOC)
 
-aiPlayer = Player(game=game, max_moves=100, name='tic-qlearner', agent=agent)
-
-done = False
+aiPlayer = Player(game=game, max_moves=MAX_MOVES, name='tic-qlearner', agent=agent)
 
 # TODO factor out role from player
-role = 'X'
-enemy = get_enemy(role)
-
-aiPlayer.train(episodes=10000, resume=False, show=True)
+aiPlayer.train(episodes=EPISODES, resume=False, show=True)
