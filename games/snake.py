@@ -15,8 +15,10 @@ class SnakeG:
     self.snake = [ (0, 2), (0, 1), (0, 0)]
     self.fruit = None
     self.board_size = board_size
-
     self.place_fruit((self.board_size // 2, self.board_size // 2))
+
+  def reset(self):
+    self.__init__(board_size=self.board_size)
 
   def place_fruit(self, coord=None):
     if coord:
@@ -30,10 +32,12 @@ class SnakeG:
          self.fruit = x, y
          return
 
+  # returns (isAlive, gotFruit)
   def step(self, direction):
     old_head = self.snake[0]
     movement = DIRECTIONS[direction]
     new_head = (old_head[0]+movement[0], old_head[1]+movement[1])
+    got_fruit = False
 
     if (
         new_head[0] < 0 or
@@ -42,16 +46,17 @@ class SnakeG:
         new_head[1] >= self.board_size or
         new_head in self.snake
       ):
-      return False
+      return False, got_fruit # game over
 
     if new_head == self.fruit:
+      got_fruit = True
       self.place_fruit()
     else:
       tail = self.snake[-1]
       del self.snake[-1]
 
     self.snake.insert(0, new_head)
-    return True
+    return True, got_fruit
 
   def print_field(self):
     os.system('clear')
@@ -70,17 +75,17 @@ class SnakeG:
 
 def test():
   snakeGame = SnakeG()
-  assert snakeGame.step('UP')
+  assert snakeGame.step('UP')[0]
 
   assert snakeGame.snake == [(0, 3), (0, 2), (0, 1)]
 
   snakeGame.fruit = (0, 4)
-  assert snakeGame.step('UP')
+  assert snakeGame.step('UP')[0]
 
   assert snakeGame.snake == [(0, 4), (0, 3), (0, 2), (0, 1)]
   assert snakeGame.fruit != (0, 4)
 
-  assert not snakeGame.step('DOWN'), 'error from test'
+  assert not snakeGame.step('DOWN')[0], 'error from test'
 
 def run():
   DIRS = ['UP', 'RIGHT', 'DOWN', 'LEFT']
@@ -120,4 +125,5 @@ def run():
     pygame.display.flip()
 
 if __name__ == '__main__':
+  test()
   run()
