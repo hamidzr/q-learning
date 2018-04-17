@@ -21,15 +21,23 @@ class Player:
       for moveNum in range(self.max_moves):
         action = self.agent.act(state)
         # TODO factor out role 'X'
-        next_state, reward, isDone, info = self.game.step(action, 'X')
+        next_state, reward, isDone, info = self.game.step(action)
         self.agent.remember(state, action, reward, next_state, isDone)
         state = next_state
         if isDone: # when episode finished
           # update game stats
           self.agent.update_target_model()
-          # put out logs
-          print(f"ep: {e}/{episodes}, moves: {moveNum}, e: {self.agent.epsilon:.2}, win/all: {self.game.stats.win_rate()} - draws/all {self.game.stats.draw_rate()}")
+          # put out logs TODO: based on win/loss or score
+          msg = f"ep: {e}/{episodes}, moves: {moveNum}, e: {self.agent.epsilon},"
+          if log == 'wins':
+            msg += f"win/all: {self.game.stats.win_rate()} - draws/all {self.game.stats.draw_rate()}"
+          elif log == 'score':
+            msg += f" score: {self.game.stats.score}, rewards: {self.game.stats.rewards}"
+          print(msg)
+
           if show: self.game.show()
+          # reset episode related stat counters
+          self.game.stats.reset_episode()
           break
         # end of episode
       # train the DNN if there are enough memories
