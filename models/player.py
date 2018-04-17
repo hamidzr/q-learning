@@ -32,7 +32,7 @@ class Player:
           if log == 'wins':
             msg += f"win/all: {self.game.stats.win_rate()} - draws/all {self.game.stats.draw_rate()}"
           elif log == 'score':
-            msg += f" score: {self.game.stats.score}, rewards: {float(self.game.stats.rewards):.5}"
+            msg += f" score: {self.game.stats.score} avg:{self.game.stats.average_score()}, rewards: {float(self.game.stats.rewards):.5}"
           print(msg)
 
           if show: self.game.show()
