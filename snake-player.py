@@ -18,7 +18,7 @@ MAX_MOVES = 200 # maximum number of moves in a game
 BOARD_SIZE=5
 
 # create the game
-baseGame = SnakeG(board_size=BOARD_SIZE)
+baseGame = SnakeG(board_size=BOARD_SIZE, grow=False, initial_snake=[(0,0)])
 game = SnakeDriver(base_game=baseGame)
 game.test()
 

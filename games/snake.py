@@ -11,15 +11,22 @@ DIRECTIONS = {
 }
 
 class SnakeG:
-  def __init__(self, board_size=50):
+  def __init__(self, board_size=50, grow=True,
+               random_start=False, initial_snake=None):
     self.snake = [(0, 2), (0, 1), (0, 0)]
+    if initial_snake != None: self.snake = initial_snake
     self.fruit = None
     self.board_size = board_size
-    self.place_fruit((self.board_size // 2, self.board_size // 2))
-    # self.place_fruit()
+    if random_start:
+      self.place_fruit()
+    else:
+      self.place_fruit((self.board_size // 2, self.board_size // 2))
+    self.grow = grow
+    self.random_start = random_start
+    self.initial_snake = initial_snake
 
   def reset(self):
-    self.__init__(board_size=self.board_size)
+    self.__init__(board_size=self.board_size, grow=self.grow, random_start=self.random_start, initial_snake=self.initial_snake)
 
   def place_fruit(self, coord=None):
     if coord:
@@ -52,6 +59,9 @@ class SnakeG:
     if new_head == self.fruit:
       got_fruit = True
       self.place_fruit()
+      if not self.grow:
+        tail = self.snake[-1]
+        del self.snake[-1]
     else:
       tail = self.snake[-1]
       del self.snake[-1]
