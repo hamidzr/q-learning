@@ -48,7 +48,6 @@ class GameStats:
       self.high_score = score
 
   def save_score(self, score):
-    print('save dscore', score)
     self.scores.add_val(score)
 
   def average_score(self):
