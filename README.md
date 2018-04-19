@@ -4,12 +4,14 @@
 ## TODO
 - add pong and snake games
 - pull the step and state logc out of the game(s)
+- support for AI vs AI
 - optimize the model, other archtectures (ongoing)
 - port the model to browser. (tfjs?)
 - browser to snap
   - save the weights
   - load the weights
   - easy definitoin of actions, state and rewards
+- more games: frogger, catching games, pong
 
 
 ## Resources
