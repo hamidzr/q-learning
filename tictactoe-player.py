@@ -18,9 +18,9 @@ state_size = 9
 action_size = state_size
 agent = DQNAgent(state_size, action_size, epsilon=0.05,
                  epsilon_decay=0.995, epsilon_min=0.01, batch_size=32)
-agent.load(SAVE_LOC)
+# agent.load(SAVE_LOC)
 
-aiPlayer = Player(game=game, max_moves=MAX_MOVES, name='tic-qlearner', agent=agent)
+aiPlayer = Player(game=game, max_moves=MAX_MOVES, name='tic-qlearner', agent=agent, role='X')
 
 # TODO factor out role from player
-aiPlayer.train(episodes=EPISODES, resume=False, show=True)
+aiPlayer.train(episodes=EPISODES, resume=False, show=False)
