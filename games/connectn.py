@@ -4,6 +4,9 @@ from itertools import groupby, chain
 NONE = '.'
 RED = 'R'
 YELLOW = 'Y'
+NONE = 0
+RED = 0.5
+YELLOW = 1
 
 def diagonalsPos (matrix, cols, rows):
   """Get positive diagonals, going from bottom-left to top-right."""
@@ -34,7 +37,7 @@ class Game:
       i -= 1
     c[i] = color
 
-    self.checkForWin()
+    # self.checkForWin()
 
   def checkForWin (self):
     """Check the current board for a winner."""
