@@ -12,10 +12,11 @@ DIRECTIONS = {
 
 class SnakeG:
   def __init__(self, board_size=50):
-    self.snake = [ (0, 2), (0, 1), (0, 0)]
+    self.snake = [(0, 2), (0, 1), (0, 0)]
     self.fruit = None
     self.board_size = board_size
     self.place_fruit((self.board_size // 2, self.board_size // 2))
+    # self.place_fruit()
 
   def reset(self):
     self.__init__(board_size=self.board_size)

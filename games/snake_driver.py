@@ -1,6 +1,7 @@
 from models.game import Game
 from utils.helpers import GameStats
 import numpy as np
+import math
 
 """
 stat definitions:
@@ -20,14 +21,15 @@ class SnakeDriver(Game):
       2. where the fruits are
     """
     # OPTIMIZE or the naive way: show everything as a big matrix
-    SNAKE_NUM, FRUIT_NUM = 0.5, -1
+    SNAKE_NUM, FRUIT_NUM = 0.5, 1
     state = np.zeros((self._game.board_size, self._game.board_size))
     for pt in self._game.snake:
       state[pt[0]][pt[1]] = SNAKE_NUM
     fruit = self._game.fruit
     state[fruit[0]][fruit[1]] = FRUIT_NUM
 
-    return state
+    flat_state = np.array(state).reshape((1,np.power(self._game.board_size, 2)))
+    return flat_state
 
   def step(self, action):
     # 0: left 1: right
@@ -43,12 +45,16 @@ class SnakeDriver(Game):
     isAlive, gotFruit = self._game.step(DIRS[direction])
     self.cur_direction = direction
 
-    reward = 0.1
+    dis_to_fruit = distance(self._game.snake[0], self._game.fruit)
+
+    # reward = -1 * dis_to_fruit / self._game.board_size
+    reward = 0
     if not isAlive:
-      reward -= 50
+      reward -= 20
     if gotFruit:
       self.stats.add_score(1)
-      reward += 5
+      reward += 10
+    reward = float(reward)
 
     self.stats.add_reward(reward)
 
@@ -62,3 +68,6 @@ class SnakeDriver(Game):
 
   def reset(self):
     self._game.reset()
+
+def distance(pt1, pt2):
+  return math.sqrt(math.pow(pt1[0]-pt2[0], 2) + math.pow(pt1[1]-pt2[1], 2))
