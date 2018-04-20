@@ -15,11 +15,15 @@ class SnakeDriver(Game):
     self.stats = GameStats()
     self.cur_direction = 0
 
-  def state(self):
+
+  def todo_state(self):
     """ the state should show:
       1. where the walls and the rest of the snake is.
       2. where the fruits are
     """
+    pass
+
+  def naive_state(self):
     # OPTIMIZE or the naive way: show everything as a big matrix
     SNAKE_NUM, FRUIT_NUM = 0.5, 1
     state = np.zeros((self._game.board_size, self._game.board_size))
@@ -30,6 +34,27 @@ class SnakeDriver(Game):
 
     flat_state = np.array(state).reshape((1,np.power(self._game.board_size, 2)))
     return flat_state
+
+  # single cell snake w/ no growth
+  def single_cell_state(self):
+    SNAKE_NUM, FRUIT_NUM = [0,1], [1,0]
+    DIR_TO_NUM = {
+      "LEFT": 0,
+      "RIGHT": 1,
+      "UP": 2,
+      "DOWN": 3
+    }
+    # state = [[position of fruit], [position of snake cell], [direction]]
+    one_hot_direction = np.zeros(4)
+    one_hot_direction[DIR_TO_NUM[self._game.direction]] = 1
+    positions = np.concatenate((self._game.fruit, self._game.snake[0])) / self._game.board_size
+    state = np.concatenate((positions, one_hot_direction))
+    state = state.reshape(1, state.shape[0])
+    return state
+
+  def state(self):
+    # return self.naive_state()
+    return self.single_cell_state()
 
   def step(self, action):
     # 0: left 1: right
@@ -48,7 +73,7 @@ class SnakeDriver(Game):
     dis_to_fruit = distance(self._game.snake[0], self._game.fruit)
 
     # reward = -1 * dis_to_fruit / self._game.board_size
-    reward = 0
+    reward = -0.1
     if not isAlive:
       reward -= 20
     if gotFruit:
