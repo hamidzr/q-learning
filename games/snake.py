@@ -21,6 +21,7 @@ class SnakeG:
       self.place_fruit()
     else:
       self.place_fruit((self.board_size // 2, self.board_size // 2))
+    self.direction = 'UP' # WARN assuming it starts upwards always
     self.grow = grow
     self.random_start = random_start
     self.initial_snake = initial_snake
@@ -42,6 +43,7 @@ class SnakeG:
 
   # returns (isAlive, gotFruit)
   def step(self, direction):
+    self.direction = direction
     old_head = self.snake[0]
     movement = DIRECTIONS[direction]
     new_head = (old_head[0]+movement[0], old_head[1]+movement[1])
