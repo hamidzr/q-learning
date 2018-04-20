@@ -20,9 +20,10 @@ board = Tic(random_ratio=0.4)
 game = TicTacToe(base_game=board)
 
 # setup the agent
-state_size = 9
-action_size = state_size
-agent = DQNAgent(state_size, action_size, epsilon=1,
+STATE_SIZE = 9
+ACTION_SIZE = STATE_SIZE
+START_EPSILON = 0.01 if args.save_resume else 1
+agent = DQNAgent(STATE_SIZE, ACTION_SIZE, epsilon=START_EPSILON,
                  epsilon_decay=0.995, epsilon_min=0.01, batch_size=32)
 
 aiPlayer = Player(game=game, max_moves=MAX_MOVES, name='tic-qlearner', agent=agent, role='X')
