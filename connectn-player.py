@@ -19,7 +19,7 @@ ROWS=5
 
 # create the game
 baseGame = Game(cols=COLS, rows=ROWS)
-game = Driver(baseGame)
+game = Driver(baseGame, log='wins')
 game.test()
 
 # setup the agent # REMEMBER set correct state size, state has to be flat (1,)
@@ -41,4 +41,4 @@ yellowPlayer = Player(game=game, max_moves=MAX_MOVES,
                       role=YELLOW)
 
 # TODO factor out role from player
-redPlayer.train(episodes=EPISODES, resume=args.save_resume, save_freq=100, show=args.show, log='wins', opponent=yellowPlayer)
+redPlayer.train(episodes=EPISODES, resume=args.save_resume, save_freq=100, show=args.show, opponent=yellowPlayer)

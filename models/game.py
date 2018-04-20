@@ -4,8 +4,9 @@ from utils.helpers import GameStats
 # a wrapper abstract class to help prepare the game for learning
 # abstrat methods must be present on the children
 class Game(ABC):
-  def __init__(self):
-    self.stats = GameStats()
+  def __init__(self, log='wins'):
+    # TODO check this might not be set properly
+    self.stats = GameStats(mode=log)
     super(Game, self).__init__()
 
   @abstractmethod

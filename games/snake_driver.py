@@ -10,9 +10,9 @@ stat definitions:
 """
 
 class SnakeDriver(Game):
-  def __init__(self, base_game=None):
+  def __init__(self, base_game=None, log='wins'):
     self._game = base_game
-    self.stats = GameStats()
+    self.stats = GameStats(mode=log)
     self.cur_direction = 0
 
 

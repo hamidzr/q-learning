@@ -19,17 +19,17 @@ BOARD_SIZE=5
 
 # create the game
 baseGame = SnakeG(board_size=BOARD_SIZE, grow=False, initial_snake=[(0,0)])
-game = SnakeDriver(base_game=baseGame)
+game = SnakeDriver(base_game=baseGame, log='score')
 game.test()
 
 # setup the agent # REMEMBER set correct state size, state has to be flat (1,)
 state_size = game.state().shape[1]
 action_size = 3 # [left, right, straight]
 agent = DQNAgent(state_size, action_size, epsilon=1,
-                 epsilon_decay=0.995, epsilon_min=0.05, batch_size=32)
+                 epsilon_decay=0.995, epsilon_min=0.01, batch_size=32)
 
 aiPlayer = Player(game=game, max_moves=MAX_MOVES, name='snake-qlearner', agent=agent)
 
 
 # TODO factor out role from player
-aiPlayer.train(episodes=EPISODES, resume=args.save_resume, save_freq=100, show=args.show, log='score')
+aiPlayer.train(episodes=EPISODES, resume=args.save_resume, save_freq=100, show=args.show)

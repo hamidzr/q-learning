@@ -15,7 +15,7 @@ class Player:
     self.last_state = None
     self.role = role
 
-  def run_episode(self, resume, show, log, opponent):
+  def run_episode(self, resume, show, opponent):
     self.game.reset()
     if (opponent): # play against another AI
       play(self, opponent)
@@ -37,7 +37,7 @@ class Player:
         if show: self.game.show()
         if isDone:
           print(f'finished episode w/ {moveNum} moves')
-          self.log(log)
+          self.log()
           self.on_episode_done()
           break
       ##### end of episode
@@ -51,7 +51,8 @@ class Player:
     self.agent.attempt_replay()
     # put out logs TODO: based on win/loss or score
 
-  def log(self, system):
+  def log(self):
+    system = self.game.stats.mode
     assert system, 'no logging system defined'
     msg = f"e: {self.agent.epsilon:.2},"
     if system == 'wins':
@@ -62,13 +63,13 @@ class Player:
 
 
   # log types 'wins' and 'score': (regression?!)
-  def train(self, episodes=10000, resume=False, save_freq=100, show=False, log='wins', opponent=None):
+  def train(self, episodes=10000, resume=False, save_freq=100, show=False, opponent=None):
     if resume and os.path.isfile(self.save_loc):
       print('loading from a previous training')
       self.agent.load(self.save_loc)
     for e in range(episodes):
       print(f'ep: {e}/{episodes}')
-      self.run_episode(resume, show, log, opponent)
+      self.run_episode(resume, show, opponent)
       # save an snapshot every so often
       if resume and e % save_freq == 0:
         self.agent.save(self.save_loc)
