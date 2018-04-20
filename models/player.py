@@ -19,10 +19,10 @@ class Player:
     self.game.reset()
     if (opponent): # play against another AI
       play(self, opponent)
-      self.on_episode_done()
-      opponent.on_episode_done()
       self.log(log)
       opponent.log(log)
+      self.on_episode_done() # has to be called after logging
+      opponent.on_episode_done()
     else:
       state = self.game.state()
       for moveNum in range(self.max_moves):
@@ -37,11 +37,12 @@ class Player:
         if show: self.game.show()
         if isDone:
           print(f'finished episode w/ {moveNum} moves')
-          self.on_episode_done()
           self.log(log)
+          self.on_episode_done()
           break
       ##### end of episode
 
+  # learns and resets stats
   def on_episode_done(self):
     # reset episode related stat counters
     self.game.stats.reset_episode()
@@ -63,6 +64,7 @@ class Player:
   # log types 'wins' and 'score': (regression?!)
   def train(self, episodes=10000, resume=False, save_freq=100, show=False, log='wins', opponent=None):
     if resume and os.path.isfile(self.save_loc):
+      print('loading from a previous training')
       self.agent.load(self.save_loc)
     for e in range(episodes):
       print(f'ep: {e}/{episodes}')
