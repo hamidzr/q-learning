@@ -26,7 +26,6 @@ class Player:
     else:
       state = self.game.state()
       for moveNum in range(self.max_moves):
-        # TODO factor out role 'X'
         action = self.agent.act(state)
         if self.role: # or handle it on step?
           next_state, reward, isDone, info = self.game.step(action, self.role)
@@ -39,7 +38,9 @@ class Player:
           print(f'finished episode w/ {moveNum} moves')
           self.log()
           self.on_episode_done()
-          break
+          return # breaks out of the loop
+      # TODO check this situation
+      print('ran out of moves')
       ##### end of episode
 
   # learns and resets stats
