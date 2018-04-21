@@ -63,7 +63,7 @@ class Player:
 
 
   # log types 'wins' and 'score': (regression?!)
-  def train(self, episodes=10000, resume=False, save_freq=100, show=False, opponent=None):
+  def train(self, episodes=10000, resume=False, plot_freq=None, save_freq=100, show=False, opponent=None):
     if resume and os.path.isfile(self.save_loc):
       print('loading from a previous training')
       self.agent.load(self.save_loc)
@@ -71,6 +71,8 @@ class Player:
       print(f'ep: {e}/{episodes}')
       self.run_episode(resume, show, opponent)
       # save an snapshot every so often
+      if plot_freq and plot_freq > 0 and e % plot_freq == 0:
+        self.game.stats.plot(self.name)
       if resume and e % save_freq == 0:
         self.agent.save(self.save_loc)
         if opponent: opponent.agent.save(opponent.save_loc)

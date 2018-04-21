@@ -21,9 +21,9 @@ game.test()
 state_size = game.state().shape[1]
 action_size = 3 # [left, right, straight]
 agent = DQNAgent(state_size, action_size, epsilon=args.start_epsilon,
-                 epsilon_decay=0.995, epsilon_min=0.01, batch_size=32)
+                 epsilon_decay=0.99, epsilon_min=0.01, batch_size=32)
 
 aiPlayer = Player(game=game, max_moves=MAX_MOVES, name='snake-qlearner', agent=agent)
 
 
-aiPlayer.train(episodes=EPISODES, resume=args.save_resume, save_freq=100, show=args.show)
+aiPlayer.train(episodes=EPISODES, resume=args.save_resume, save_freq=args.save_freq, show=args.show, plot_freq=args.plot_freq)

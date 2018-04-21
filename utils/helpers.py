@@ -17,6 +17,8 @@ parser = argparse.ArgumentParser()
 parser.add_argument("--show", type=bool, default=False, help="show game progress")
 parser.add_argument("--save_resume", type=bool, default=False, help="save and resume?")
 parser.add_argument("--start_epsilon", type=float, default=1, help="starting epsilon")
+parser.add_argument("--save_freq", type=int, default=100, help="do you want saves? how frequent?")
+parser.add_argument("--plot_freq", type=int, default=100, help="do you want plot? how frequent? 0 or -1 to disable")
 args = parser.parse_args()
 
 # keeps track of game stats
