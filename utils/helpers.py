@@ -1,6 +1,8 @@
 import matplotlib.pyplot as plt
 import logging, os
 import numpy as np
+import argparse
+
 logging.basicConfig(level=getattr(logging, os.getenv('DEBUG', 'INFO')))
 logger = logging.getLogger('qlearner')
 
@@ -10,6 +12,12 @@ def plot_linear(xs, ys, fname=None):
     if (fname):
         plt.savefig(fname)
         plt.close()
+
+parser = argparse.ArgumentParser()
+parser.add_argument("--show", type=bool, default=False, help="show game progress")
+parser.add_argument("--save_resume", type=bool, default=False, help="save and resume?")
+parser.add_argument("--start_epsilon", type=float, default=1, help="starting epsilon")
+args = parser.parse_args()
 
 # keeps track of game stats
 class GameStats:
