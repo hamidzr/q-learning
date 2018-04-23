@@ -28,11 +28,13 @@ class TwoPOrchestrator:
     try:
       p.game.act(action, p.role) # take the action
     except Exception as e:
-      print('violating action no1 won')
       isDone = True
       reward = -10
+      p.stats.add_reward(reward)
+      p.stats.lost()
       p.agent.remember(p.last_state, p.last_action, reward, next_state, isDone)
-
+      # enemy wins
+      self.get_opponent(p).stats.won()
     return isDone
 
   # play untill episode is over
