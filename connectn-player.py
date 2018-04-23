@@ -3,12 +3,7 @@ from models.dqn import DQNAgent
 from games.connectn_driver import Driver
 from games.connectn import Game, RED, YELLOW
 from models.player import Player
-import argparse
-
-parser = argparse.ArgumentParser()
-parser.add_argument("--show", type=bool, default=False, help="show game progress")
-parser.add_argument("--save_resume", type=bool, default=False, help="save and resume?")
-args = parser.parse_args()
+from utils.helpers import args
 
 EPISODES = 20000
 MAX_MOVES = 20 # maximum number of moves in a game
