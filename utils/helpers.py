@@ -3,6 +3,7 @@ import logging, os
 import numpy as np
 import argparse
 
+# logging essentials
 logging.basicConfig(level=getattr(logging, os.getenv('DEBUG', 'INFO')))
 logger = logging.getLogger('qlearner')
 
@@ -13,6 +14,7 @@ def plot_linear(xs, ys, fname=None):
         plt.savefig(fname)
         plt.close()
 
+# cli arguments
 parser = argparse.ArgumentParser()
 parser.add_argument("--show", type=bool, default=False, help="show game progress")
 parser.add_argument("--save_resume", type=bool, default=False, help="save and resume?")
@@ -21,6 +23,13 @@ parser.add_argument("--save_freq", type=int, default=100, help="do you want save
 parser.add_argument("--plot_freq", type=int, default=100, help="do you want plot? how frequent? 0 or -1 to disable")
 args = parser.parse_args()
 
+# one hot encode array of numbers # WARN multiplies the size of state by the largest number
+# max num is the biggest anticipated value in arr (0 based)
+def one_hot(npArray, maxNum):
+  assert len(npArray.shape) == 1, 'bad input shape'
+  b = np.zeros((npArray.size, maxNum+1))
+  b[np.arange(npArray.size),npArray] = 1
+  return b
 
 # base stats structure
 def stats_structure():

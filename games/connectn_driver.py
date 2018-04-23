@@ -1,5 +1,5 @@
 from models.game import Game
-from utils.helpers import stats_structure
+from utils.helpers import stats_structure, one_hot
 import numpy as np
 
 # how do you learn when you get rewarded just because of the stupidity of the other one
@@ -9,9 +9,10 @@ class Driver(Game):
 
   def state(self):
     state = np.array(self.game.board).flatten()
-    # TODO each player's state should be repr as one hot encoded
-    state = state.reshape(1, len(state))
-    return state
+    state = one_hot(state, 2) # matrix
+    one_d = np.concatenate(state)
+    one_d = one_d.reshape(1, len(one_d))
+    return one_d
 
   def act(self, action, role):
     # number of actions: self.game.cols
