@@ -8,6 +8,7 @@ class Driver(Game):
 
   def state(self):
     state = np.array(self.game.board).flatten()
+    # TODO each player's state should be repr as one hot encoded
     state = state.reshape(1, len(state))
     return state
 
@@ -42,10 +43,10 @@ class Driver(Game):
     return new_state, reward, isDone, None
 
   def show(self):
-    self.printBoard()
+    self.game.printBoard()
 
   def reset(self):
-    pass
+    self.game.__init__(cols=self.game.cols, rows=self.game.rows)
 
 if __name__ == '__main__':
   from games.connectn import Game
