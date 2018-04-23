@@ -3,9 +3,8 @@ import numpy as np
 
 # how do you learn when you get rewarded just because of the stupidity of the other one
 class Driver(Game):
-  def __init__(self, base_game=None):
-    super().__init__()
-    self.game = base_game
+  def __init__(self, **kwargs):
+    super().__init__(**kwargs)
 
   def state(self):
     state = np.array(self.game.board).flatten()

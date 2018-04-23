@@ -14,7 +14,7 @@ ROWS=5
 
 # create the game
 baseGame = Game(cols=COLS, rows=ROWS)
-game = Driver(baseGame, log='wins')
+game = Driver(base_game=baseGame, log='wins')
 game.test()
 
 # setup the agent # REMEMBER set correct state size, state has to be flat (1,)
