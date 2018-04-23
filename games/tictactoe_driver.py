@@ -3,9 +3,8 @@ from utils.helpers import GameStats
 import numpy as np
 
 class TicTacToe(Game):
-  def __init__(self, base_game=None):
-    self.game = base_game
-    self.stats = GameStats()
+  def __init__(self, **kwargs):
+    super().__init__(**kwargs)
 
   def state(self):
     state = self.game.squares[:] # make a copy
@@ -24,12 +23,15 @@ class TicTacToe(Game):
 
   def step(self, action, role):
     # compute the state into NN friendly format, normalize etc
+    reward = 0
+    stats = {'won': False, 'lost': False, 'score': 0,
+             'reward': reward, 'draw': False}
     if not action in self.game.available_moves():
       new_state = self.state()
       reward = -15
-      self.stats.illegal_move()
       isDone = True
-      return new_state, reward, isDone, 'WRONGMOVE'
+      stats['reward'] = reward
+      return new_state, reward, isDone, stats
     # prepare the new_state
     self.game.move_and_respond(action, role)
     new_state = self.state()
@@ -41,20 +43,21 @@ class TicTacToe(Game):
     info = self.game.winner()
     if isDone:
       if info ==  role:
-        self.stats.won()
+        stats['won'] = True
         reward = 10
       elif info == self.game.get_enemy(role):
-        self.stats.lost()
+        stats['lost'] = True
         reward = -10
       else: # draw
         assert info == None, 'bad game winner'
-        self.stats.draw()
+        stats['draw'] == True
         reward = 0
     else: # reward for picking a valid action..
       reward = 2
     reward = float(reward)
 
-    return new_state, reward, isDone, info
+    stats['reward'] = reward
+    return new_state, reward, isDone, stats
 
   def show(self):
     self.game.show()

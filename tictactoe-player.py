@@ -2,14 +2,8 @@ import numpy as np
 from models.dqn import DQNAgent
 from games.tictactoe_driver import TicTacToe
 from games.tictactoe import Tic, get_enemy
-from utils.helpers import GameStats
+from utils.helpers import GameStats, args
 from models.player import Player
-import argparse
-
-parser = argparse.ArgumentParser()
-parser.add_argument("--show", type=bool, default=False, help="show game progress")
-parser.add_argument("--save_resume", type=bool, default=False, help="save and resume?")
-args = parser.parse_args()
 
 
 EPISODES = 20000
@@ -28,4 +22,4 @@ agent = DQNAgent(STATE_SIZE, ACTION_SIZE, epsilon=START_EPSILON,
 
 aiPlayer = Player(game=game, max_moves=MAX_MOVES, name='tic-qlearner', agent=agent, role='X')
 
-aiPlayer.train(episodes=EPISODES, resume=args.save_resume, show=args.show)
+aiPlayer.train(episodes=EPISODES, resume=args.save_resume, show=args.show, plot_freq=args.plot_freq)
