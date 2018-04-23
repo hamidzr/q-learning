@@ -1,4 +1,5 @@
 from models.game import Game
+from utils.helpers import stats_structure
 import numpy as np
 
 # how do you learn when you get rewarded just because of the stupidity of the other one
@@ -29,8 +30,7 @@ class Driver(Game):
   def feedback(self, role):
     isDone = False
     reward = 0
-    stats = {'won': False, 'lost': False, 'score': 0,
-             'reward': reward, 'draw': False}
+    stats = stats_structure()
     new_state = self.state()
     winner = self.game.getWinner()
     if winner:
@@ -44,6 +44,8 @@ class Driver(Game):
       else: # role lost
         reward += -10
         stats['lost'] = True
+
+    stats['reward'] = reward
     return new_state, reward, isDone, stats
 
   def show(self):

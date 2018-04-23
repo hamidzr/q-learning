@@ -1,5 +1,5 @@
 from models.game import Game
-from utils.helpers import GameStats
+from utils.helpers import stats_structure
 import numpy as np
 
 class TicTacToe(Game):
@@ -24,8 +24,7 @@ class TicTacToe(Game):
   def step(self, action, role):
     # compute the state into NN friendly format, normalize etc
     reward = 0
-    stats = {'won': False, 'lost': False, 'score': 0,
-             'reward': reward, 'draw': False}
+    stats = stats_structure()
     if not action in self.game.available_moves():
       new_state = self.state()
       reward = -15

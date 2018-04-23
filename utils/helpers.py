@@ -21,6 +21,13 @@ parser.add_argument("--save_freq", type=int, default=100, help="do you want save
 parser.add_argument("--plot_freq", type=int, default=100, help="do you want plot? how frequent? 0 or -1 to disable")
 args = parser.parse_args()
 
+
+# base stats structure
+def stats_structure():
+  statsSample = {'won': False, 'lost': False, 'score': 0,
+             'reward': 0, 'draw': False}
+  return statsSample
+
 # keeps track of game stats
 class GameStats:
   # keeps track of game stats

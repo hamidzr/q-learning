@@ -1,5 +1,5 @@
 from models.game import Game
-from utils.helpers import GameStats
+from utils.helpers import stats_structure
 import numpy as np
 import math
 
@@ -18,10 +18,8 @@ DIR_TO_NUM = {
 }
 
 class SnakeDriver(Game):
-  def __init__(self, base_game=None, log='wins'):
-    self.game = base_game
-    self.stats = GameStats(mode=log)
-
+  def __init__(self, **kwargs):
+    super().__init__(**kwargs)
 
   def todo_state(self):
     """ the state should show:
@@ -69,19 +67,19 @@ class SnakeDriver(Game):
 
     # reward = -1 * dis_to_fruit / self.game.board_size
     reward = -0.1
+    stats = stats_structure()
     if not isAlive:
       reward -= 20
     if gotFruit:
-      self.stats.add_score(1)
+      stats['score'] = 1
       reward += 10
     reward = float(reward)
 
-    self.stats.add_reward(reward)
-
     new_state = self.state()
     isDone = not isAlive
+    stats['reward'] = reward
 
-    return new_state, reward, isDone, None
+    return new_state, reward, isDone, stats
 
   def show(self):
     self.game.print_field()
