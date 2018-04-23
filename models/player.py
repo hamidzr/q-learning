@@ -1,11 +1,13 @@
 import numpy as np
 import os.path
 from models.self_play import play
+from utils.helpers import GameStats
 
 # or trainee
 # game is the standardized game driver
 class Player:
-  def __init__(self, max_moves=None, name="aiPlayer", agent=None, game=None, role=None):
+  def __init__(self, max_moves=None, name="aiPlayer", agent=None, game=None, role=None, log='wins'):
+    self.stats = GameStats(mode=log)
     self.game = game
     self.agent = agent
     self.max_moves = max_moves #max number of moves in a game
@@ -34,6 +36,7 @@ class Player:
         self.agent.remember(state, action, reward, next_state, isDone)
         state = next_state
         if show: self.game.show()
+        self.stats.update_stats(info)
         if isDone:
           print(f'finished episode w/ {moveNum} moves')
           self.log()
@@ -46,20 +49,20 @@ class Player:
   # learns and resets stats
   def on_episode_done(self):
     # reset episode related stat counters
-    self.game.stats.reset_episode()
+    self.stats.reset_episode()
     self.agent.update_target_model()
     # train the DNN if there are enough memories
     self.agent.attempt_replay()
-    # put out logs TODO: based on win/loss or score
+    # put out logs TODO: based on win/loss or reward
 
   def log(self):
-    system = self.game.stats.mode
+    system = self.stats.mode
     assert system, 'no logging system defined'
-    msg = f"e: {self.agent.epsilon:.2},"
+    msg = f"p:{self.name} e: {self.agent.epsilon:.2},"
     if system == 'wins':
-      msg += f"win/all: {self.game.stats.win_rate()} - draws/all {self.game.stats.draw_rate()}"
+      msg += f"win/all: {self.stats.win_rate()} - draws/all {self.stats.draw_rate()}"
     elif system == 'score':
-      msg += f" score: {self.game.stats.score} avg:{self.game.stats.average_score()}, rewards: {float(self.game.stats.rewards):.5}"
+      msg += f" score: {self.stats.score} avg:{self.stats.average_score()}, rewards: {float(self.stats.rewards):.5}"
     print(msg)
 
 
@@ -69,11 +72,11 @@ class Player:
       print('loading from a previous training')
       self.agent.load(self.save_loc)
     for e in range(episodes):
-      print(f'ep: {e}/{episodes}')
+      print(f'ep: {e}/{episodes} ================ begin ============')
       self.run_episode(resume, show, opponent)
       # save an snapshot every so often
       if plot_freq and plot_freq > 0 and e % plot_freq == 0:
-        self.game.stats.plot(self.name)
+        self.stats.plot(self.name)
       if resume and e % save_freq == 0:
         self.agent.save(self.save_loc)
         if opponent: opponent.agent.save(opponent.save_loc)

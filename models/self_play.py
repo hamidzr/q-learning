@@ -11,6 +11,7 @@ def setup_episode(p):
 # one move from one side
 def move(p):
   next_state, reward, isDone, info = p.game.feedback(p.role)
+  p.stats.update_stats(info)
   p.agent.remember(p.last_state, p.last_action, reward, next_state, isDone)
   p.last_state = next_state
   action = p.agent.act(next_state) # comeup with an action
@@ -22,6 +23,7 @@ def move(p):
   try:
     p.game.act(action, p.role) # take the action
   except Exception as e:
+    print('violating action no1 won')
     isDone = True
     reward = -10
     p.agent.remember(p.last_state, p.last_action, reward, next_state, isDone)
@@ -43,8 +45,16 @@ def play(p1, p2):
   while moveNum < max_moves and not isDone:
     # TODO setup initial state and action for p1 n p2
     isDone = move(p1)
+    if (isDone):
+      next_state, reward, isDone, info = p2.game.feedback(p2.role)
+      p2.stats.update_stats(info)
+      break
 
     isDone = move(p2)
+    if (isDone):
+      next_state, reward, isDone, info = p1.game.feedback(p1.role)
+      p1.stats.update_stats(info)
+      break
 
     moveNum += 1
 #   max_moves = p1.max_moves

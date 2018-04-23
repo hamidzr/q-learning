@@ -99,6 +99,17 @@ class GameStats:
   def average_score(self):
     return self.scores.average()
 
+  # updates stats based on feedback from the game driver in batch
+  def update_stats(self, stats):
+    if (stats['won']):
+      self.won()
+    elif (stats['lost']):
+      self.lost()
+    elif (stats['draw']):
+      self.draw()
+    self.add_score(stats['score'])
+    self.add_reward(stats['reward'])
+
   def plot(self, name):
     # TODO average n points together before plotting
     xs = np.linspace(0, self.episodes-1, self.episodes)
