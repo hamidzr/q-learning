@@ -9,11 +9,18 @@ stat definitions:
   rewards: described in code
 """
 
+DIRS = ['UP', 'RIGHT', 'DOWN', 'LEFT']
+DIR_TO_NUM = {
+  "UP": 0,
+  "RIGHT": 1,
+  "DOWN": 2,
+  "LEFT": 3,
+}
+
 class SnakeDriver(Game):
   def __init__(self, base_game=None, log='wins'):
     self._game = base_game
     self.stats = GameStats(mode=log)
-    self.cur_direction = 0
 
 
   def todo_state(self):
@@ -38,15 +45,10 @@ class SnakeDriver(Game):
   # single cell snake w/ no growth
   def single_cell_state(self):
     SNAKE_NUM, FRUIT_NUM = [0,1], [1,0]
-    DIR_TO_NUM = {
-      "LEFT": 0,
-      "RIGHT": 1,
-      "UP": 2,
-      "DOWN": 3
-    }
-    # state = [[position of fruit], [position of snake cell], [direction]]
+    # state = [position of fruit, position of snake cell, direction]
     one_hot_direction = np.zeros(4)
     one_hot_direction[DIR_TO_NUM[self._game.direction]] = 1
+    # normalize positions
     positions = np.concatenate((self._game.fruit, self._game.snake[0])) / self._game.board_size
     state = np.concatenate((positions, one_hot_direction))
     state = state.reshape(1, state.shape[0])
@@ -57,18 +59,11 @@ class SnakeDriver(Game):
     return self.single_cell_state()
 
   def step(self, action):
-    # 0: left 1: right
-    DIRS = ['UP', 'RIGHT', 'DOWN', 'LEFT']
-    direction = self.cur_direction
-    if action == 0:
-      direction = (direction+3) % 4
-    elif action == 1:
-      direction = (direction+1) % 4
-    else:
-      assert action == 2, f'bad action {action}'
+    # 0: left, 1: right, 2: keep going straight
+    ACTION_STR = ['TURN_LEFT', 'TURN_RIGHT', 'KEEP_GOING']
+    # print( 'cur dir', self._game.direction, ACTION_STR[action]) # check the actions taken
 
-    isAlive, gotFruit = self._game.step(DIRS[direction])
-    self.cur_direction = direction
+    isAlive, gotFruit = self._game.step_relative(ACTION_STR[action])
 
     dis_to_fruit = distance(self._game.snake[0], self._game.fruit)
 

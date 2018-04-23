@@ -10,6 +10,23 @@ DIRECTIONS = {
   "DOWN": (0, -1),
 }
 
+DIR_TO_NUM = {
+  "UP": 0,
+  "RIGHT": 1,
+  "DOWN": 2,
+  "LEFT": 3,
+}
+
+# converts relative to absolute direction
+def rel_to_abs_dir(cur_dir, rel_dir):
+  DIRS = ['UP', 'RIGHT', 'DOWN', 'LEFT']
+  dir_idx = DIR_TO_NUM[cur_dir]
+  if rel_dir == 'TURN_LEFT':
+    dir_idx = (dir_idx+3) % 4
+  elif rel_dir == 'TURN_RIGHT':
+    dir_idx = (dir_idx+1) % 4
+  return DIRS[dir_idx]
+
 class SnakeG:
   def __init__(self, board_size=50, grow=True,
                random_start=False, initial_snake=None):
@@ -41,6 +58,12 @@ class SnakeG:
          self.fruit = x, y
          return
 
+  def step_relative(self, relative_direction):
+    cur_dir = self.direction
+    abs_dir = rel_to_abs_dir(cur_dir, relative_direction)
+    return self.step(abs_dir)
+
+  # takes in absolute direction of the snake
   # returns (isAlive, gotFruit)
   def step(self, direction):
     self.direction = direction
@@ -86,6 +109,7 @@ class SnakeG:
       print('|')
     print('=' * (self.board_size+2))
 
+
 def test():
   snakeGame = SnakeG()
   assert snakeGame.step('UP')[0]
@@ -97,8 +121,36 @@ def test():
 
   assert snakeGame.snake == [(0, 4), (0, 3), (0, 2), (0, 1)]
   assert snakeGame.fruit != (0, 4)
-
   assert not snakeGame.step('DOWN')[0], 'error from test'
+
+  # test direction conversion
+  cur_dir = 'UP'
+  rel_action = 'TURN_LEFT'
+  res_dir = rel_to_abs_dir(cur_dir, rel_action)
+  assert  res_dir == 'LEFT', f'returned dir {res_dir}'
+  cur_dir = 'UP'
+  rel_action = 'TURN_RIGHT'
+  assert rel_to_abs_dir(cur_dir, rel_action) == 'RIGHT'
+  cur_dir = 'UP'
+  rel_action = 'WHATEV'
+  assert rel_to_abs_dir(cur_dir, rel_action) == 'UP'
+
+  cur_dir = 'DOWN'
+  rel_action = 'TURN_RIGHT'
+  assert rel_to_abs_dir(cur_dir, rel_action) == 'LEFT'
+  cur_dir = 'DOWN'
+  rel_action = 'TURN_LEFT'
+  assert rel_to_abs_dir(cur_dir, rel_action) == 'RIGHT'
+  cur_dir = 'DOWN'
+  rel_action = 'ANY'
+  assert rel_to_abs_dir(cur_dir, rel_action) == 'DOWN'
+
+  cur_dir = 'LEFT'
+  rel_action = 'TURN_RIGHT'
+  assert rel_to_abs_dir(cur_dir, rel_action) == 'UP'
+  cur_dir = 'LEFT'
+  rel_action = 'TURN_LEFT'
+  assert rel_to_abs_dir(cur_dir, rel_action) == 'DOWN'
 
 def run():
   DIRS = ['UP', 'RIGHT', 'DOWN', 'LEFT']
