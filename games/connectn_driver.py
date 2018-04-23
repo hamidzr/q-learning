@@ -29,18 +29,22 @@ class Driver(Game):
   def feedback(self, role):
     isDone = False
     reward = 0
+    stats = {'won': False, 'lost': False, 'score': 0,
+             'reward': reward, 'draw': False}
     new_state = self.state()
     winner = self.game.getWinner()
     if winner:
       print('winner', winner)
+      self.show()
       isDone = True
+      print('win role', winner, role)
       if winner == role:
-        self.stats.won()
+        stats['won'] = True
         reward += 10
       else: # role lost
         reward += -10
-        self.stats.lost()
-    return new_state, reward, isDone, None
+        stats['lost'] = True
+    return new_state, reward, isDone, stats
 
   def show(self):
     self.game.printBoard()
