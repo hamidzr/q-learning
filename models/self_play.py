@@ -3,9 +3,10 @@
 NONE = 0
 
 class TwoPOrchestrator:
-  def __init__(self, p1, p2):
-    self.p1 = p1
-    self.p2 = p2
+  def __init__(self, pA, pB):
+    self.pA = pA
+    self.pB = pB
+    self.starter = pA
 
   # setups the episode for
   def setup_episode(self, p):
@@ -38,57 +39,64 @@ class TwoPOrchestrator:
     return isDone
 
   # play untill episode is over
+  # TODO swap who goes first at every game
   def play(self):
     # init
+    firstP = self.starter;
+    secondP = self.get_opponent(self.starter);
     moveNum = 0
     isDone = False
-    max_moves = self.p1.max_moves
+    max_moves = firstP.max_moves
 
-    self.setup_episode(self.p1)
-    self.move(self.p1)
-    self.setup_episode(self.p2)
-    self.move(self.p2)
+    self.setup_episode(firstP)
+    self.move(firstP)
+    self.setup_episode(secondP)
+    self.move(secondP)
 
     while moveNum < max_moves and not isDone:
-      # TODO setup initial state and action for self.p1 n self.p2
-      isDone = self.move(self.p1)
+      # TODO setup initial state and action for firstP n secondP
+      isDone = self.move(firstP)
       if (isDone):
-        next_state, reward, isDone, info = self.p2.game.feedback(self.p2.role)
-        self.p2.stats.update_stats(info)
+        next_state, reward, isDone, info = secondP.game.feedback(secondP.role)
+        secondP.stats.update_stats(info)
         break
 
-      isDone = self.move(self.p2)
+      isDone = self.move(secondP)
       if (isDone):
-        next_state, reward, isDone, info = self.p1.game.feedback(self.p1.role)
-        self.p1.stats.update_stats(info)
+        next_state, reward, isDone, info = firstP.game.feedback(firstP.role)
+        firstP.stats.update_stats(info)
         break
 
       moveNum += 1
 
-  def get_enemy(self, p):
-    if (p == self.p1):
-      return self.p2
-    else:
-      return self.p1
+    # swap play order for the next game
+    self.starter = self.get_opponent(self.starter)
 
-def play(p1, p2):
-  orch = TwoPOrchestrator(p1, p2)
+  def get_opponent(self, p):
+    if (p == self.pA):
+      return self.pB
+    else:
+      return self.pA
+
+# keeping the api unchanged
+def play(pA, pB):
+  orch = TwoPOrchestrator(pA, pB)
   orch.play()
-#   max_moves = p1.max_moves
+#   max_moves = pA.max_moves
 #   isDone = False
-#   # p1 act get isDone
-#   action = p1.agent.act(state)
-#   print('p1 act')
+#   # pA act get isDone
+#   action = pA.agent.act(state)
+#   print('pA act')
 #   while not isDone and max_moves:
 #     # if isDone at any step both do a step and finish episode
-#     # a: p2 act get isDone
-#     print('p2 act')
-#     # p1 do step get isDone
-#     print('p1 step')
-#     # p1 act get isDone
-#     print('p1 act')
-#     print('p2 step')
-#     # p2 do step getisDone
+#     # a: pB act get isDone
+#     print('pB act')
+#     # pA do step get isDone
+#     print('pA step')
+#     # pA act get isDone
+#     print('pA act')
+#     print('pB step')
+#     # pB do step getisDone
 #     # go to a:
-#   print('p1 step')
-#   print('p2 step')
+#   print('pA step')
+#   print('pB step')
