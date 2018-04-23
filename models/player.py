@@ -19,8 +19,8 @@ class Player:
     self.game.reset()
     if (opponent): # play against another AI
       play(self, opponent)
-      self.log(log)
-      opponent.log(log)
+      self.log()
+      opponent.log()
       self.on_episode_done() # has to be called after logging
       opponent.on_episode_done()
     else:
