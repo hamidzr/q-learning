@@ -5,18 +5,18 @@ import numpy as np
 class Driver(Game):
   def __init__(self, base_game=None):
     super().__init__()
-    self._game = base_game
+    self.game = base_game
 
   def state(self):
-    state = np.array(self._game.board).flatten()
+    state = np.array(self.game.board).flatten()
     state = state.reshape(1, len(state))
     return state
 
   def act(self, action, role):
-    # number of actions: self._game.cols
+    # number of actions: self.game.cols
     isDone = False
-    self._game.insert(action, role)
-    winner = self._game.getWinner()
+    self.game.insert(action, role)
+    winner = self.game.getWinner()
     if winner: isDone = True
     return isDone
 
@@ -30,7 +30,7 @@ class Driver(Game):
     isDone = False
     reward = 0
     new_state = self.state()
-    winner = self._game.getWinner()
+    winner = self.game.getWinner()
     if winner:
       print('winner', winner)
       isDone = True

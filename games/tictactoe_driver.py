@@ -4,11 +4,11 @@ import numpy as np
 
 class TicTacToe(Game):
   def __init__(self, base_game=None):
-    self._game = base_game
+    self.game = base_game
     self.stats = GameStats()
 
   def state(self):
-    state = self._game.squares[:] # make a copy
+    state = self.game.squares[:] # make a copy
     # map x and o to numbers
     # TODO provide reverse mapper
     for idx, val in enumerate(state):
@@ -24,26 +24,26 @@ class TicTacToe(Game):
 
   def step(self, action, role):
     # compute the state into NN friendly format, normalize etc
-    if not action in self._game.available_moves():
+    if not action in self.game.available_moves():
       new_state = self.state()
       reward = -15
       self.stats.illegal_move()
       isDone = True
       return new_state, reward, isDone, 'WRONGMOVE'
     # prepare the new_state
-    self._game.move_and_respond(action, role)
+    self.game.move_and_respond(action, role)
     new_state = self.state()
 
     # is it finished?
-    isDone = self._game.complete() # OPTIMIZE recomputing the winner
+    isDone = self.game.complete() # OPTIMIZE recomputing the winner
 
     # define the rewards
-    info = self._game.winner()
+    info = self.game.winner()
     if isDone:
       if info ==  role:
         self.stats.won()
         reward = 10
-      elif info == self._game.get_enemy(role):
+      elif info == self.game.get_enemy(role):
         self.stats.lost()
         reward = -10
       else: # draw
@@ -57,7 +57,7 @@ class TicTacToe(Game):
     return new_state, reward, isDone, info
 
   def show(self):
-    self._game.show()
+    self.game.show()
 
   def reset(self):
-    self._game.reset()
+    self.game.reset()

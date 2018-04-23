@@ -14,7 +14,7 @@ def move(p):
   p.agent.remember(p.last_state, p.last_action, reward, next_state, isDone)
   p.last_state = next_state
   action = p.agent.act(next_state) # comeup with an action
-  if p.game._game.board[action][0] != NONE:
+  if p.game.game.board[action][0] != NONE:
     action = p.agent.act(next_state) # comeup with an action
   p.last_action = action
 
