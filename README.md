@@ -11,7 +11,7 @@
   - save the weights
   - load the weights
   - easy definitoin of actions, state and rewards
-- more games: frogger, catching games, pong
+- more games: frogger, catching games, pong, openai games
 
 
 ## Resources
@@ -21,3 +21,4 @@
 - Base TicTacToe game [link](https://TODO)
 - Base Snake game [gist](https://gist.githubusercontent.com/HonzaKral/833ee2b30231c53ec78e/raw/c4492fe1bf594c1c5d7194e9a4016213f15e327b/snake.py)
 - Base Connectn game [gist](https://gist.github.com/poke/6934842)
+- Base Pong game [github repo](https://github.com/kidscancode/intro-python-code)
