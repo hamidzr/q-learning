@@ -2,61 +2,76 @@
 
 NONE = 0
 
-# setups the episode for
-def setup_episode(p):
-  state = p.game.state()
-  p.last_action = p.agent.act(state)
-  p.last_state = state
+class TwoPOrchestrator:
+  def __init__(self, p1, p2):
+    self.p1 = p1
+    self.p2 = p2
 
-# one move from one side
-def move(p):
-  next_state, reward, isDone, info = p.game.feedback(p.role)
-  p.stats.update_stats(info)
-  p.agent.remember(p.last_state, p.last_action, reward, next_state, isDone)
-  p.last_state = next_state
-  action = p.agent.act(next_state) # comeup with an action
-  if p.game.game.board[action][0] != NONE:
-    action = p.agent.act(next_state) # comeup with an action
-  p.last_action = action
+  # setups the episode for
+  def setup_episode(self, p):
+    state = p.game.state()
+    p.last_action = p.agent.act(state)
+    p.last_state = state
 
-  # TODO factor this out to appropriate section
-  try:
-    p.game.act(action, p.role) # take the action
-  except Exception as e:
-    print('violating action no1 won')
-    isDone = True
-    reward = -10
+  # one move from one side
+  def move(self, p):
+    next_state, reward, isDone, info = p.game.feedback(p.role)
+    p.stats.update_stats(info)
     p.agent.remember(p.last_state, p.last_action, reward, next_state, isDone)
+    p.last_state = next_state
+    action = p.agent.act(next_state) # comeup with an action
+    if p.game.game.board[action][0] != NONE:
+      action = p.agent.act(next_state) # comeup with an action
+    p.last_action = action
 
-  return isDone
+    # TODO factor this out to appropriate section
+    try:
+      p.game.act(action, p.role) # take the action
+    except Exception as e:
+      print('violating action no1 won')
+      isDone = True
+      reward = -10
+      p.agent.remember(p.last_state, p.last_action, reward, next_state, isDone)
 
-# play untill episode is over
+    return isDone
+
+  # play untill episode is over
+  def play(self):
+    # init
+    moveNum = 0
+    isDone = False
+    max_moves = self.p1.max_moves
+
+    self.setup_episode(self.p1)
+    self.move(self.p1)
+    self.setup_episode(self.p2)
+    self.move(self.p2)
+
+    while moveNum < max_moves and not isDone:
+      # TODO setup initial state and action for self.p1 n self.p2
+      isDone = self.move(self.p1)
+      if (isDone):
+        next_state, reward, isDone, info = self.p2.game.feedback(self.p2.role)
+        self.p2.stats.update_stats(info)
+        break
+
+      isDone = self.move(self.p2)
+      if (isDone):
+        next_state, reward, isDone, info = self.p1.game.feedback(self.p1.role)
+        self.p1.stats.update_stats(info)
+        break
+
+      moveNum += 1
+
+  def get_enemy(self, p):
+    if (p == self.p1):
+      return self.p2
+    else:
+      return self.p1
+
 def play(p1, p2):
-  # init
-  moveNum = 0
-  isDone = False
-  max_moves = p1.max_moves
-
-  setup_episode(p1)
-  move(p1)
-  setup_episode(p2)
-  move(p2)
-
-  while moveNum < max_moves and not isDone:
-    # TODO setup initial state and action for p1 n p2
-    isDone = move(p1)
-    if (isDone):
-      next_state, reward, isDone, info = p2.game.feedback(p2.role)
-      p2.stats.update_stats(info)
-      break
-
-    isDone = move(p2)
-    if (isDone):
-      next_state, reward, isDone, info = p1.game.feedback(p1.role)
-      p1.stats.update_stats(info)
-      break
-
-    moveNum += 1
+  orch = TwoPOrchestrator(p1, p2)
+  orch.play()
 #   max_moves = p1.max_moves
 #   isDone = False
 #   # p1 act get isDone
