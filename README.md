@@ -12,6 +12,7 @@
   - load the weights
   - easy definitoin of actions, state and rewards
 - more games: frogger, catching games, pong, openai games
+- checkout games from [qlearning4k](https://github.com/farizrahman4u/qlearning4k)
 
 
 ## Resources
