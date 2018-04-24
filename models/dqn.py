@@ -10,11 +10,11 @@ class DQNAgent:
   def __init__(self, state_size, action_size, epsilon=1,
                epsilon_min=0.01, epsilon_decay=0.99,
                discount_rate=0.95, learning_rate=0.001,
-               batch_size=32):
+               batch_size=32, memory_length=2000):
     self.batch_size = batch_size
     self.state_size = state_size
     self.action_size = action_size
-    self.memory = deque(maxlen=2000)
+    self.memory = deque(maxlen=memory_length)
     self.gamma = discount_rate  # discount rate
     self.epsilon = float(epsilon)  # exploration rate
     self.epsilon_min = epsilon_min
