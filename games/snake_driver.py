@@ -17,6 +17,7 @@ DIR_TO_NUM = {
   "LEFT": 3,
 }
 
+
 class SnakeDriver(Game):
   def __init__(self, **kwargs):
     super().__init__(**kwargs)
@@ -52,6 +53,7 @@ class SnakeDriver(Game):
     state = state.reshape(1, state.shape[0])
     return state
 
+  # TODO add walls to the state, onehot encode?
   def state(self):
     # return self.naive_state()
     return self.single_cell_state()
