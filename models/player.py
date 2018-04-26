@@ -68,9 +68,10 @@ class Player:
 
   # log types 'wins' and 'score': (regression?!)
   def train(self, episodes=10000, resume=False, plot_freq=None, save_freq=100, show=False, opponent=None):
-    if resume and os.path.isfile(self.save_loc):
+    if resume:
       print('loading from a previous training')
       self.agent.load(self.save_loc)
+      if opponent: opponent.agent.load(opponent.save_loc)
     for e in range(episodes):
       print(f'ep: {e}/{episodes} ================ begin ============')
       self.run_episode(resume, show, opponent)

@@ -1,5 +1,6 @@
 import random
 import numpy as np
+import os
 from collections import deque
 from keras.models import Sequential
 from keras.layers import Dense
@@ -73,7 +74,11 @@ class DQNAgent:
       self.epsilon *= self.epsilon_decay
 
   def load(self, name):
-    self.model.load_weights(name)
+    if os.path.isfile(name):
+      self.model.load_weights(name)
+    else:
+      print(f'{name} does not exist, skipped loading.')
 
   def save(self, name):
+    print('saving', name)
     self.model.save_weights(name)
