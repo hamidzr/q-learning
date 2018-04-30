@@ -67,8 +67,8 @@ class SnakeDriver(Game):
 
     dis_to_fruit = distance(self.game.snake[0], self.game.fruit)
 
-    # reward = -1 * dis_to_fruit / self.game.board_size
-    reward = -0.1
+    reward = -1 * dis_to_fruit / self.game.board_size
+    # reward = -0.1
     stats = stats_structure()
     if not isAlive:
       reward -= 20
