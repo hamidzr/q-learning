@@ -2,10 +2,20 @@ import matplotlib.pyplot as plt
 import logging, os
 import numpy as np
 import argparse
+from scipy.interpolate import spline
+import pickle
 
 # logging essentials
 logging.basicConfig(level=getattr(logging, os.getenv('DEBUG', 'INFO')))
 logger = logging.getLogger('qlearner')
+
+def smooth_xy(xs, ys, points_ratio=10):
+  assert (len(xs) == len(ys)), "length mismatch between axises"
+  points = int(len(xs) / points_ratio)
+  xs_s = np.linspace(xs.min(),xs.max(),points) #300 represents number of points to make between xs.min and xs.max
+  ys_s = spline(xs,ys,xs_s)
+  return (xs_s, ys_s)
+
 
 def plot_linear(xs, ys, fname=None):
     assert (len(xs) == len(ys)), "length mismatch between axises"
@@ -129,11 +139,15 @@ class GameStats:
   def plot(self, name):
     # TODO average n points together before plotting
     xs = np.linspace(0, self.episodes-1, self.episodes)
-    plot_linear(xs, self.history['rewards'], fname=f'figs/{name}-rewards.jpg')
+
+    eps, rewards = smooth_xy(xs, self.history['rewards'])
+    plot_linear(eps, rewards, fname=f'figs/{name}-rewards.jpg')
     if (self.mode == 'wins'):
-      plot_linear(xs, self.history['win_rate'], fname=f'figs/{name}-win_rate.jpg')
+      eps, win_rate = smooth_xy(xs, self.history['win_rate'])
+      plot_linear(eps, win_rate, fname=f'figs/{name}-win_rate.jpg')
     else:
-      plot_linear(xs, self.history['scores'], fname=f'figs/{name}-scores.jpg')
+      eps, scores = smooth_xy(xs, self.history['scores'])
+      plot_linear(eps, scores, fname=f'figs/{name}-scores.jpg')
 
   def __string__(self):
     pass #TODO factor out it from player (maybe..)
