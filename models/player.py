@@ -50,7 +50,6 @@ class Player:
   def on_episode_done(self):
     # reset episode related stat counters
     self.stats.reset_episode()
-    self.agent.update_target_model()
     # train the DNN if there are enough memories
     self.agent.attempt_replay()
     # put out logs TODO: based on win/loss or reward
@@ -67,7 +66,7 @@ class Player:
 
 
   # log types 'wins' and 'score': (regression?!)
-  def train(self, episodes=10000, resume=False, plot_freq=None, save_freq=100, show=False, opponent=None):
+  def train(self, episodes=10000, resume=False, plot_freq=None, save_freq=100, show=False, opponent=None, update_freq=2):
     if resume:
       print('loading from a previous training')
       self.agent.load(self.save_loc)
@@ -75,6 +74,9 @@ class Player:
     for e in range(episodes):
       print(f'ep: {e}/{episodes} ================ begin ============')
       self.run_episode(resume, show, opponent)
+      if e % update_freq == 0:
+        self.agent.update_target_model()
+        if opponent: opponent.agent.update_target_model()
       # save an snapshot every so often
       if plot_freq and plot_freq > 0 and e % plot_freq == 0:
         self.stats.plot(self.name)
