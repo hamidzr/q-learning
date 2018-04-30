@@ -152,6 +152,15 @@ class GameStats:
   def __string__(self):
     pass #TODO factor out it from player (maybe..)
 
+  def save(self, name):
+    print('saving..')
+    dump('out/'+name, self)
+
+
+  def load(self, name):
+    print('loading..')
+    load('out/'+name, self)
+
 
 class Link(object):
     def __init__(self, value=0.0):
@@ -179,6 +188,15 @@ class LinkedRing(object):
 
     def average(self):
         return self.sum / self.length
+
+
+def dump(fname, data):
+  with open(fname, 'wb') as f:
+    pickle.dump(data, f)
+
+def load(fname):
+  with open(fname, 'rb') as f:
+    return pickle.load(f)
 
 if __name__ == '__main__':
 # Test example:

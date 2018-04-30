@@ -2,7 +2,7 @@ import numpy as np
 import os.path
 from models.self_play import play
 from utils.helpers import GameStats
-
+import signal, sys, pickle
 # or trainee
 # game is the standardized game driver
 class Player:
@@ -16,6 +16,7 @@ class Player:
     self.last_action = None
     self.last_state = None
     self.role = role
+    signal.signal(signal.SIGINT, self.close_handler())
 
   def run_episode(self, resume, show, opponent):
     self.game.reset()
@@ -78,8 +79,18 @@ class Player:
         self.agent.update_target_model()
         if opponent: opponent.agent.update_target_model()
       # save an snapshot every so often
-      if plot_freq and plot_freq > 0 and e % plot_freq == 0:
+      if plot_freq and plot_freq > 0 and e > 10 and e % plot_freq == 0:
         self.stats.plot(self.name)
       if resume and e % save_freq == 0:
         self.agent.save(self.save_loc)
         if opponent: opponent.agent.save(opponent.save_loc)
+
+    # save stats when finished
+    self.stats.save(self.name + '-stats')
+
+  def close_handler(self):
+    def signal_handler(signal, frame):
+      # close gracefully
+      self.stats.save(self.name + '-stats')
+      sys.exit(0)
+    return signal_handler
