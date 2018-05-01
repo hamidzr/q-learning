@@ -10,14 +10,13 @@ EPISODES = 20000
 MAX_MOVES = 100 # maximum number of moves in a game
 
 # create the game
-board = Tic(random_ratio=0.4)
+board = Tic(random_ratio=0.1)
 game = TicTacToe(base_game=board)
 
 # setup the agent
-STATE_SIZE = 9
-ACTION_SIZE = STATE_SIZE
-START_EPSILON = 0.01 if args.save_resume else 1
-agent = DQNAgent(STATE_SIZE, ACTION_SIZE, epsilon=START_EPSILON,
+STATE_SIZE = game.state().shape[1]
+ACTION_SIZE = 9
+agent = DQNAgent(STATE_SIZE, ACTION_SIZE, epsilon=args.start_epsilon,
                  epsilon_decay=0.995, epsilon_min=0.01, batch_size=32)
 
 aiPlayer = Player(game=game, max_moves=MAX_MOVES, name='tic-qlearner', agent=agent, role='X')

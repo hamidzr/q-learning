@@ -1,5 +1,5 @@
 from models.game import Game
-from utils.helpers import stats_structure
+from utils.helpers import stats_structure, one_hot
 import numpy as np
 
 class TicTacToe(Game):
@@ -14,12 +14,15 @@ class TicTacToe(Game):
       if val == 'O':
         state[idx] = 1
       if val == 'X':
-        state[idx] = -1
+        state[idx] = 2
       if val == None:
         state[idx] = 0
-    state = np.array(state).reshape(1, len(state))
-    # TODO normalize state
-    return state
+    state = np.array(state)
+    # state = state.reshape(1, len(state))
+    state = one_hot(state, 2) # onehot encode
+    one_d = np.concatenate(state)
+    one_d = one_d.reshape(1, len(one_d))
+    return one_d
 
   def step(self, action, role):
     # compute the state into NN friendly format, normalize etc
