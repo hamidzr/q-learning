@@ -52,10 +52,10 @@ class TicTacToe(Game):
         reward = -10
       else: # draw
         assert info == None, 'bad game winner'
-        stats['draw'] == True
+        stats['draw'] = True
         reward = 0
     else: # reward for picking a valid action..
-      reward = 2
+      reward = 1
     reward = float(reward)
 
     stats['reward'] = reward
