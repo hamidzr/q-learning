@@ -1,33 +1,24 @@
 import random
+from utils.helpers import args
+from models.player import Player
 import gym
+from games.cart_driver import GameDriver
 import numpy as np
 from models.dqn import DQNAgent
 
-EPISODES = 2000
+EPISODES = 1000
+MAX_MOVES = 500
+memory_size = 2000
 
-env = gym.make('CartPole-v1')
-state_size = env.observation_space.shape[0]
-action_size = env.action_space.n
-agent = DQNAgent(state_size, action_size)
-# agent.load("./save/cartpole-ddqn.h5")
-done = False
-batch_size = 32
+baseGame = gym.make('CartPole-v1')
+game = GameDriver(base_game=baseGame)
 
-# TODO match the new architecture
-for e in range(EPISODES):
-  state = env.reset()
-  state = np.reshape(state, [1, state_size])
-  print(state.shape)
-  for time in range(500):
-    # env.render()
-    action = agent.act(state)
-    next_state, reward, done, _ = env.step(action)
-    reward = reward if not done else -10
-    next_state = np.reshape(next_state, [1, state_size])
-    agent.remember(state, action, reward, next_state, done)
-    state = next_state
-    if done:
-      agent.update_target_model()
-      print("episode: {}/{}, score: {}, e: {:.2}"
-          .format(e, EPISODES, time, agent.epsilon))
-      break
+state_size = baseGame.observation_space.shape[0]
+action_size = baseGame.action_space.n
+
+agent = DQNAgent(state_size, action_size, epsilon=args.start_epsilon,
+                 epsilon_decay=0.99, epsilon_min=0.10, batch_size=32, memory_length=memory_size)
+
+aiPlayer = Player(game=game, max_moves=MAX_MOVES, name='cart-qlearner', agent=agent, log='score')
+
+aiPlayer.train(episodes=EPISODES, resume=args.save_resume, save_freq=args.save_freq, show=args.show, plot_freq=args.plot_freq, update_freq=1)
