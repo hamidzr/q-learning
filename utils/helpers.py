@@ -124,19 +124,19 @@ class GameStats:
   def plot(self, name):
     def preprocess(ys):
       c_ys = remove_outliers(ys)
-      c_ys = moving_avg(c_ys, window=10)
+      c_ys = moving_avg(c_ys, window=50)
       xs = np.linspace(1, len(c_ys), len(c_ys))
       xs, final_ys = smooth_xy(xs, c_ys, points_ratio=20)
       return xs, final_ys
 
     eps, rewards = preprocess(self.history['rewards'])
-    plot_linear(eps, rewards, fname=f'figs/{name}-rewards.jpg')
+    plot_linear(eps, rewards, fname=f'{name}-rewards')
     if (self.mode == 'wins'):
       eps, win_rate = preprocess(self.history['win_rate'])
-      plot_linear(eps, win_rate, fname=f'figs/{name}-win_rate.jpg')
+      plot_linear(eps, win_rate, fname=f'{name}-win_rate')
     else:
       eps, scores = preprocess(self.history['scores'])
-      plot_linear(eps, scores, fname=f'figs/{name}-scores.jpg')
+      plot_linear(eps, scores, fname=f'{name}-scores')
 
   def __string__(self):
     pass #TODO factor out it from player (maybe..)

@@ -1,6 +1,9 @@
 from scipy.interpolate import spline
 import matplotlib.pyplot as plt
 import numpy as np
+import time
+
+TRIAL=str(int(time.time()))
 
 def smooth_xy(xs, ys, points_ratio=10):
   assert (len(xs) == len(ys)), "length mismatch between axises"
@@ -24,5 +27,5 @@ def plot_linear(xs, ys, fname=None):
     assert (len(xs) == len(ys)), "length mismatch between axises"
     plt.plot(xs, ys, c='b')
     if (fname):
-        plt.savefig(fname)
+        plt.savefig(f'figs/{fname}-{TRIAL}.jpg')
         plt.close()
