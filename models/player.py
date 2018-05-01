@@ -35,7 +35,7 @@ class Player:
         else:
           next_state, reward, isDone, info = self.game.step(action)
         self.agent.remember(state, action, reward, next_state, isDone)
-        state = next_state
+        state = next_state # unnecessary?
         if show: self.game.show()
         self.stats.update_stats(info)
         if isDone:

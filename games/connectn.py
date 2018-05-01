@@ -5,8 +5,8 @@ NONE = '.'
 RED = 'R'
 YELLOW = 'Y'
 NONE = 0
-RED = 0.5
-YELLOW = 1
+RED = 1
+YELLOW = 2
 
 def diagonalsPos (matrix, cols, rows):
   """Get positive diagonals, going from bottom-left to top-right."""
