@@ -1,0 +1,5 @@
+matplotlib
+tensorflow
+keras
+pickle
+gym
