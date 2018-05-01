@@ -24,6 +24,7 @@ class DQNAgent:
     self.model = self._build_model()
     self.target_model = self._build_model()
     self.update_target_model()
+    self.model.summary()
 
   def _huber_loss(self, target, prediction):
     # sqrt(1+error^2)-1
