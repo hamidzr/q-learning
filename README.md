@@ -11,7 +11,8 @@
   - save the weights
   - load the weights
   - easy definitoin of actions, state and rewards
-- more games: frogger, catching games, pong, openai games
+- reward clipping
+- more games: frogger, catching games, pong, openai games, grid world
 - checkout games from [qlearning4k](https://github.com/farizrahman4u/qlearning4k)
 
 
